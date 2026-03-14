@@ -1,0 +1,390 @@
+Welcom Dynamic 
+
+activity.xml
+
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="@android:bool/config_enableMaterialDesignInPackageInstaller"
+    tools:context=".MainActivity">
+
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="103dp"
+        android:layout_marginBottom="563dp"
+        android:ems="10"
+        android:hint="Enter Your Name"
+        android:inputType="text" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="164dp"
+        android:layout_marginBottom="482dp"
+        android:text="Submit" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="159dp"
+        android:layout_marginBottom="401dp"
+        android:text=" " />
+</RelativeLayout>
+
+MainActivity.java
+
+package com.example.helloworld;
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    // Declare the necessary variables
+    private EditText editTextName;
+    private Button buttonSubmit;
+    private TextView textViewResult;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main); // Link to the XML layout
+
+        // Initialize the views
+        editTextName = findViewById(R.id.editText2);
+        buttonSubmit = findViewById(R.id.button2);
+        textViewResult = findViewById(R.id.textView2);
+
+        // Set the onClickListener for the button
+        buttonSubmit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Get the text entered in the EditText
+                String userName = editTextName.getText().toString();
+
+                // Check if the input is not empty
+                if (!userName.isEmpty()) {
+                    // Display the personalized message in the TextView
+                    textViewResult.setText("Welcome, " + userName + "!");
+                } else {
+                    // If the input is empty, show a default message
+                    textViewResult.setText("Please enter your name.");
+                }
+            }
+        });
+    }
+}
+
+
+
+
+2--------------------------------------Sign-up------------------------------------
+
+
+Activity.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:gravity="center">
+
+    <LinearLayout
+        android:id="@+id/loginLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="Login" android:textSize="24sp" android:textStyle="bold" />
+
+        <EditText android:id="@+id/loginEmail" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:hint="Email" />
+
+        <EditText android:id="@+id/loginPass" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:hint="Password" android:inputType="textPassword" />
+
+        <Button android:id="@+id/btnLogin" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="Sign In" android:layout_marginTop="10dp"/>
+
+        <TextView android:id="@+id/toSignup" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="Don't have an account? Sign up"
+            android:layout_gravity="center" android:padding="10dp" android:textColor="#007BFF"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/signupLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="Create Account" android:textSize="24sp" android:textStyle="bold" />
+
+        <EditText android:id="@+id/regEmail" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:hint="Email" />
+
+        <EditText android:id="@+id/regPass" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:hint="Password" android:inputType="textPassword" />
+
+        <Button android:id="@+id/btnRegister" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:text="Register" android:layout_marginTop="10dp"/>
+
+        <TextView android:id="@+id/toLogin" android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:text="Already have an account? Login"
+            android:layout_gravity="center" android:padding="10dp" android:textColor="#007BFF"/>
+    </LinearLayout>
+
+</LinearLayout>
+
+
+
+Java file
+
+package com.example.signup_ch2;
+
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    LinearLayout loginLayout, signupLayout;
+    EditText loginEmail, loginPass, regEmail, regPass;
+    Button btnLogin, btnRegister;
+    TextView toSignup, toLogin;
+
+    // SharedPreferences for simple data storage
+    SharedPreferences sharedPreferences;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Initialize UI Elements
+        initViews();
+
+        sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE);
+
+        // Switch to Signup View
+        toSignup.setOnClickListener(v -> {
+            loginLayout.setVisibility(View.GONE);
+            signupLayout.setVisibility(View.VISIBLE);
+        });
+
+        // Switch back to Login View
+        toLogin.setOnClickListener(v -> {
+            signupLayout.setVisibility(View.GONE);
+            loginLayout.setVisibility(View.VISIBLE);
+        });
+
+        // --- REGISTRATION LOGIC ---
+        btnRegister.setOnClickListener(v -> {
+            String email = regEmail.getText().toString().trim();
+            String pass = regPass.getText().toString().trim();
+
+            if (email.isEmpty() || pass.isEmpty()) {
+                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            } else if (sharedPreferences.contains(email)) {
+                // CHECK IF ALREADY REGISTERED
+                Toast.makeText(this, "User already exists! Please login.", Toast.LENGTH_SHORT).show();
+            } else {
+                // SAVE NEW USER
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(email, pass); // Key = Email, Value = Password
+                editor.apply();
+                Toast.makeText(this, "Registered Successfully!", Toast.LENGTH_SHORT).show();
+
+                // Switch to login automatically
+                signupLayout.setVisibility(View.GONE);
+                loginLayout.setVisibility(View.VISIBLE);
+            }
+        });
+
+        // --- LOGIN LOGIC ---
+        btnLogin.setOnClickListener(v -> {
+            String email = loginEmail.getText().toString().trim();
+            String pass = loginPass.getText().toString().trim();
+
+            // CHECK IF USER EXISTS
+            if (sharedPreferences.contains(email)) {
+                String savedPass = sharedPreferences.getString(email, "");
+
+                if (pass.equals(savedPass)) {
+                    Toast.makeText(this, "Login Successful! Welcome.", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Incorrect Password!", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "No account found. Please register.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void initViews() {
+        loginLayout = findViewById(R.id.loginLayout);
+        signupLayout = findViewById(R.id.signupLayout);
+        loginEmail = findViewById(R.id.loginEmail);
+        loginPass = findViewById(R.id.loginPass);
+        regEmail = findViewById(R.id.regEmail);
+        regPass = findViewById(R.id.regPass);
+        btnLogin = findViewById(R.id.btnLogin);
+        btnRegister = findViewById(R.id.btnRegister);
+        toSignup = findViewById(R.id.toSignup);
+        toLogin = findViewById(R.id.toLogin);
+    }
+}
+
+
+
+3----------------------------------Calculator------------------------------
+
+
+xml file
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/display"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="#DDDDDD"
+        android:gravity="end|bottom"
+        android:padding="10dp"
+        android:text="0"
+        android:textSize="40sp" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:columnCount="4"
+        android:layout_marginTop="20dp">
+
+        <Button android:id="@+id/btn_7" android:text="7" />
+        <Button android:id="@+id/btn_8" android:text="8" />
+        <Button android:id="@+id/btn_9" android:text="9" />
+        <Button android:id="@+id/btn_div" android:text="/" />
+
+        <Button android:id="@+id/btn_4" android:text="4" />
+        <Button android:id="@+id/btn_5" android:text="5" />
+        <Button android:id="@+id/btn_6" android:text="6" />
+        <Button android:id="@+id/btn_mul" android:text="*" />
+
+        <Button android:id="@+id/btn_1" android:text="1" />
+        <Button android:id="@+id/btn_2" android:text="2" />
+        <Button android:id="@+id/btn_3" android:text="3" />
+        <Button android:id="@+id/btn_sub" android:text="-" />
+
+        <Button android:id="@+id/btn_clear" android:text="C" />
+        <Button android:id="@+id/btn_0" android:text="0" />
+        <Button android:id="@+id/btn_equal" android:text="=" />
+        <Button android:id="@+id/btn_plus" android:text="+" />
+    </GridLayout>
+</LinearLayout>
+
+
+
+java file
+
+
+package com.example.calc; // MAKE SURE THIS MATCHES YOUR PROJECT
+
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+
+    private TextView display;
+    private double firstValue = Double.NaN;
+    private String operator = "";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        display = findViewById(R.id.display);
+
+        // Array of all number button IDs
+        int[] numberIds = {R.id.btn_0, R.id.btn_1, R.id.btn_2, R.id.btn_3, R.id.btn_4,
+                R.id.btn_5, R.id.btn_6, R.id.btn_7, R.id.btn_8, R.id.btn_9};
+
+        // Setting listeners for numbers
+        View.OnClickListener numListener = v -> {
+            Button b = (Button) v;
+            if (display.getText().toString().equals("0")) display.setText("");
+            display.append(b.getText().toString());
+        };
+
+        for (int id : numberIds) findViewById(id).setOnClickListener(numListener);
+
+        // Operator Logic
+        findViewById(R.id.btn_plus).setOnClickListener(v -> setOp("+"));
+        findViewById(R.id.btn_sub).setOnClickListener(v -> setOp("-"));
+        findViewById(R.id.btn_mul).setOnClickListener(v -> setOp("*"));
+        findViewById(R.id.btn_div).setOnClickListener(v -> setOp("/"));
+
+        // Clear Logic
+        findViewById(R.id.btn_clear).setOnClickListener(v -> {
+            display.setText("0");
+            firstValue = Double.NaN;
+        });
+
+        // Equals Logic
+        findViewById(R.id.btn_equal).setOnClickListener(v -> {
+            if (!Double.isNaN(firstValue)) {
+                double secondValue = Double.parseDouble(display.getText().toString());
+                double result = 0;
+                switch (operator) {
+                    case "+": result = firstValue + secondValue; break;
+                    case "-": result = firstValue - secondValue; break;
+                    case "*": result = firstValue * secondValue; break;
+                    case "/": result = firstValue / secondValue; break;
+                }
+                display.setText(String.valueOf(result));
+                firstValue = Double.NaN;
+            }
+        });
+    }
+
+    private void setOp(String op) {
+        firstValue = Double.parseDouble(display.getText().toString());
+        operator = op;
+        display.setText("0");
+    }
+}
