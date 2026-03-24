@@ -1,0 +1,447 @@
+------------------------------------------------FRAGMENTS------------------------------------------
+
+activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <fragment
+        android:id="@+id/fragment_container1"
+        android:name="com.example.frag_chany.FragmentOne"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+
+    <fragment
+        android:id="@+id/fragment_container2"
+        android:name="com.example.frag_chany.FragmentTwo"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
+</LinearLayout>
+
+fragment1.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="#F5F5DC"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:text="This is Fragment 1"
+        android:textSize="24sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</FrameLayout>
+
+fragment2.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="#F0FFFF"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:text="This is Fragment 2"
+        android:textSize="24sp"
+        android:layout_width="wrap_content"
+
+        android:layout_height="wrap_content"/>
+
+</FrameLayout>
+
+MainActivity.java
+
+package com.example.frag_chany;
+
+import android.os.Bundle;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+}
+
+FragmentOne.java
+
+package com.example.frag_chany;
+
+import android.os.Bundle;
+import androidx.fragment.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+public class FragmentOne extends Fragment {
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment1, container, false);
+    }
+}
+
+FragmentTwo.java
+
+package com.example.frag_chany;
+import android.os.Bundle;
+import androidx.fragment.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+public class FragmentTwo extends Fragment {
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment2, container, false);
+    }
+}
+
+
+-----------------------------------Images-------------------------------------------------------
+activity_main.xml
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <Button
+        android:id="@+id/btnStartWallpaper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="Start Random Wallpaper (30s)" />
+
+</RelativeLayout>
+
+MainActivity.java
+
+package com.example.wallpaper_cha;
+import android.app.WallpaperManager;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
+import java.io.IOException;
+import java.util.Random;
+
+public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "WallpaperApp";
+    private Handler handler = new Handler();
+    private int[] images = {R.drawable.img1, R.drawable.img2, R.drawable.img3};
+    private Random random = new Random();
+    private Runnable runnable;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Button btnStart = findViewById(R.id.btnStartWallpaper);
+
+        btnStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Button Clicked!");
+                Toast.makeText(MainActivity.this, "Service Started", Toast.LENGTH_SHORT).show();
+                startRotation();
+            }
+        });
+    }
+
+    private void startRotation() {
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                changeWallpaper();
+                // Set the next one in 30 seconds
+                handler.postDelayed(this, 30000);
+            }
+        };
+        handler.post(runnable);
+    }
+
+    private void changeWallpaper() {
+        WallpaperManager myWallpaperManager = WallpaperManager.getInstance(getApplicationContext());
+        int randomIndex = random.nextInt(images.length);
+        int resId = images[randomIndex];
+
+        try {
+            myWallpaperManager.setResource(resId);
+            Log.d(TAG, "Wallpaper changed to resource: " + resId);
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to set wallpaper: " + e.getMessage());
+            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (handler != null && runnable != null) {
+            handler.removeCallbacks(runnable);
+        }
+    }
+}
+
+AndriodManifest.xml
+
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
+
+----------------------------------Scrolling Content------------------------------------------------
+
+activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+        <TextView
+            android:id="@+id/largeContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/long_text"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:padding="20dp"
+            android:textStyle="bold" />
+</ScrollView>
+
+MainActivity.java
+
+package com.example.scrollview;
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+}
+
+strings.xml
+
+<resources>
+    <string name="app_name">ScrollView</string>
+    <string name="long_text">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.
+        Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris.
+        Fusce nec tellus sed augue semper porta. Mauris massa.
+
+        Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra.
+        In consectetur, elit nec facilisis varius, sapien ligula tincidunt lorem, nec interdum justo augue sit amet arcu.
+
+        Curabitur sit amet magna quam. Praesent in libero vel turpis pellentesque egestas sit amet vel nunc.
+        Nunc lobortis dui neque quis.
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+        Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante.
+
+        Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.
+        Quisque sit amet est et sapien ullamcorper pharetra.
+
+        Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi.
+        Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.
+        Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris.
+        Fusce nec tellus sed augue semper porta. Mauris massa.
+
+        Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra.
+        In consectetur, elit nec facilisis varius, sapien ligula tincidunt lorem, nec interdum justo augue sit amet arcu.
+
+        Curabitur sit amet magna quam. Praesent in libero vel turpis pellentesque egestas sit amet vel nunc.
+        Nunc lobortis dui neque quis.
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+        Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante.
+
+        Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.
+        Quisque sit amet est et sapien ullamcorper pharetra.
+
+        Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi.
+        Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.
+        Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris.
+        Fusce nec tellus sed augue semper porta. Mauris massa.
+
+        Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra.
+        In consectetur, elit nec facilisis varius, sapien ligula tincidunt lorem, nec interdum justo augue sit amet arcu.
+
+        Curabitur sit amet magna quam. Praesent in libero vel turpis pellentesque egestas sit amet vel nunc.
+        Nunc lobortis dui neque quis.
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+        Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante.
+
+        Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.
+        Quisque sit amet est et sapien ullamcorper pharetra.
+
+        Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi.
+        Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.
+        Sed nisi. Nulla quis sem at nibh elementum imperdiet. Duis sagittis ipsum. Praesent mauris.
+        Fusce nec tellus sed augue semper porta. Mauris massa.
+
+        Vestibulum lacinia arcu eget nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra.
+        In consectetur, elit nec facilisis varius, sapien ligula tincidunt lorem, nec interdum justo augue sit amet arcu.
+
+        Curabitur sit amet magna quam. Praesent in libero vel turpis pellentesque egestas sit amet vel nunc.
+        Nunc lobortis dui neque quis.
+
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.
+        Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante.
+
+        Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo.
+        Quisque sit amet est et sapien ullamcorper pharetra.
+
+        Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi.
+        Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac
+
+    </string>
+</resources>
+
+
+-------------------------------increament operation-----------------------------------------------
+activity_main.xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/textview1"
+        android:layout_height="match_parent"
+        android:textSize="24sp"
+       android:layout_width="match_parent"/>
+
+    <Button
+        android:id="@+id/btn_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="185dp"
+        android:layout_marginBottom="377dp"
+        android:text="start" />
+
+    <Button
+        android:id="@+id/btn_stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="184dp"
+        android:layout_marginBottom="268dp"
+        android:text="stop" />
+
+
+</RelativeLayout>
+
+
+MainActivity.java
+
+
+package com.example.btn_str_chn;
+
+import android.os.Bundle;
+import android.os.Handler;
+import android.widget.Button;
+import android.widget.TextView;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+public class MainActivity extends AppCompatActivity {
+    Handler handler=new Handler();
+    int i=1;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
+        setContentView(R.layout.activity_main);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        Button start1=findViewById(R.id.btn_start);
+        TextView tv=findViewById(R.id.textview1);
+        Button stop1=findViewById(R.id.btn_stop);
+        Runnable r=new Runnable() {
+            @Override
+            public void run() {
+                tv.setText(""+i++);
+                handler.postDelayed(this,1000);
+            }
+        };
+        start1.setOnClickListener(v->handler.post(r));
+        stop1.setOnClickListener(v->handler.removeCallbacks(r));
+    }
+}
